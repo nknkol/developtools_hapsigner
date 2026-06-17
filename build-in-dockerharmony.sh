@@ -43,7 +43,7 @@ mv ELFIO-* third_party/third_party_elfio
 curl -fsSL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz | tar -Jxf -
 mv json third_party/third_party_json
 
-git clone --depth 1 https://gitee.com/openharmony/third_party_bounds_checking_function.git \
+git clone --depth 1 https://gitcode.com/openharmony/third_party_bounds_checking_function.git \
   third_party/third_party_bounds_checking_function
 
 curl -fsSL https://github.com/madler/zlib/archive/refs/heads/master.tar.gz | tar -zxf -
