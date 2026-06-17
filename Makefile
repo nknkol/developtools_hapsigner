@@ -1,6 +1,7 @@
 # Makefile for standalone compilation of binary_sign_tool
 
 PROJ := /home/user/developtools_hapsigner
+OPENSSL_PREFIX ?= /home/linuxbrew/.linuxbrew
 
 CXX := /home/linuxbrew/.linuxbrew/Cellar/gcc/15.2.0_1/bin/g++-15
 CXXFLAGS := -std=c++17 -fno-rtti -Wall -B/home/linuxbrew/.linuxbrew/Cellar/binutils/2.46.0/bin/ -include $(PROJ)/compat.h
@@ -45,7 +46,7 @@ INCLUDES := \
   -I$(T)/third_party_bounds_checking_function/include \
   -I$(T)/third_party_bounds_checking_function/src \
   -I$(T)/third_party_zlib/contrib/minizip \
-  -I/home/linuxbrew/.linuxbrew/include
+  -I$(OPENSSL_PREFIX)/include
 
 SRCS := \
   $(B)/main.cpp \
@@ -111,7 +112,7 @@ SEC_SRCS := \
 OBJS := $(patsubst %.cpp, $(BLD)/%.o, $(SRCS))
 SEC_OBJS := $(patsubst %.c, $(BLD)/%.o, $(SEC_SRCS))
 
-LDFLAGS := -L/home/linuxbrew/.linuxbrew/lib -lssl -lcrypto -ldl
+LDFLAGS := -L$(OPENSSL_PREFIX)/lib -lssl -lcrypto -ldl
 
 TARGET := $(BLD)/binary-sign-tool
 

@@ -1,0 +1,70 @@
+name: build-binary-sign-tool
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Pull dockerharmony
+        run: docker pull hqzing/dockerharmony:latest
+
+      - name: Build inside container
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/out:/out \
+            hqzing/dockerharmony:latest \
+            sh -c '
+              set -e
+              ALPINE="http://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64"
+
+              echo ">>> Installing zsh"
+              curl -fsSL ${ALPINE}/APKINDEX.tar.gz | tar -zx -C /tmp
+              ZSH_VER=$(grep -A1 "^P:zsh$" /tmp/APKINDEX | sed -n "s/^V://p")
+              curl -L -o /tmp/zsh.apk ${ALPINE}/zsh-${ZSH_VER}.apk
+              tar -zxf /tmp/zsh.apk -C /
+
+              echo ">>> Installing Harmonybrew"
+              zsh -c "$(curl -fsSL https://harmonybrew.atomgit.com/install.sh)"
+              export PATH="/storage/Users/currentUser/.harmonybrew/bin:$PATH"
+
+              echo ">>> Installing build tools"
+              brew install openssl ohsdk make
+
+              echo ">>> Cloning repo"
+              git clone --depth 1 https://github.com/nknkol/developtools_hapsigner.git /tmp/repo
+              cd /tmp/repo
+
+              echo ">>> Fetching third_party deps"
+              mkdir -p third_party
+              curl -fsSL https://github.com/serge1/ELFIO/archive/refs/heads/master.tar.gz | tar -zxf -
+              mv ELFIO-* third_party/third_party_elfio
+              curl -fsSL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz | tar -Jxf -
+              mv json third_party/third_party_json
+              git clone --depth 1 https://gitee.com/openharmony/third_party_bounds_checking_function.git third_party/third_party_bounds_checking_function
+              curl -fsSL https://github.com/madler/zlib/archive/refs/heads/master.tar.gz | tar -zxf -
+              mv zlib-* third_party/third_party_zlib
+
+              echo ">>> Compiling"
+              export OHOS_SDK="/storage/Users/currentUser/.harmonybrew/opt/ohsdk"
+              export PATH="${OHOS_SDK}/native/llvm/bin:$PATH"
+              make \
+                CXX="clang++" \
+                CXXFLAGS="-std=c++17 -fno-rtti -target aarch64-linux-ohos" \
+                OPENSSL_PREFIX="/storage/Users/currentUser/.harmonybrew/opt/openssl" \
+                PROJ="$(pwd)" \
+                -j$(nproc)
+
+              echo ">>> Done"
+              ls -lh build/binary-sign-tool
+              file build/binary-sign-tool
+              cp build/binary-sign-tool /out/
+            '
+
+      - name: Show binary
+        run: |
+          ls -lh out/binary-sign-tool
+          file out/binary-sign-tool
