@@ -19,11 +19,12 @@ zsh -c "$(curl -fsSL https://harmonybrew.atomgit.com/install.sh)"
 eval "$(/storage/Users/currentUser/.harmonybrew/bin/brew shellenv)"
 
 # ── Step 3: Install build tools ──────────────────────────────────────
-echo ">>> Installing openssl + ohsdk + make"
-brew install openssl ohsdk make
+echo ">>> Installing build tools"
+eval "$(/storage/Users/currentUser/.harmonybrew/bin/brew shellenv)"
+brew install openssl ohos-sdk make
 
 # ── Step 3: Setup toolchain ──────────────────────────────────────────
-export OHOS_SDK="/storage/Users/currentUser/.harmonybrew/opt/ohsdk"
+export OHOS_SDK="/storage/Users/currentUser/.harmonybrew/opt/ohos-sdk"
 export PATH="${OHOS_SDK}/native/llvm/bin:$PATH"
 
 # ── Step 5: Clone repo ───────────────────────────────────────────────

@@ -30,7 +30,7 @@ jobs:
               eval "$(/storage/Users/currentUser/.harmonybrew/bin/brew shellenv)"
 
               echo ">>> Installing build tools"
-              brew install openssl ohsdk make
+              brew install openssl ohos-sdk make
 
               echo ">>> Cloning repo"
               git clone --depth 1 https://github.com/nknkol/developtools_hapsigner.git /tmp/repo
@@ -47,7 +47,7 @@ jobs:
               mv zlib-* third_party/third_party_zlib
 
               echo ">>> Compiling"
-              export OHOS_SDK="/storage/Users/currentUser/.harmonybrew/opt/ohsdk"
+              export OHOS_SDK="/storage/Users/currentUser/.harmonybrew/opt/ohos-sdk"
               export PATH="${OHOS_SDK}/native/llvm/bin:$PATH"
               make \
                 CXX="clang++" \
