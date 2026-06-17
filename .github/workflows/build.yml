@@ -3,6 +3,8 @@ name: build-binary-sign-tool
 on:
   push:
     branches: [master]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -66,3 +68,22 @@ jobs:
         run: |
           ls -lh out/binary-sign-tool
           file out/binary-sign-tool
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          gh release create ${{ github.ref_name }} out/binary-sign-tool \
+            --title "${{ github.ref_name }}" \
+            --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Release (manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          gh release create nightly-$(date +%Y%m%d-%H%M) out/binary-sign-tool \
+            --title "Nightly $(date +%Y%m%d-%H%M)" \
+            --prerelease \
+            --notes "Manual build from master"
+        env:
+          GH_TOKEN: ${{ github.token }}
