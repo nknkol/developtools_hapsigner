@@ -40,13 +40,17 @@ private:
     static bool loadProfileAndSign(SignerConfig& signerConfig, std::map<std::string, std::string>& signParams,
                             std::string& p7b);
     static bool isExecElf(ELFIO::elfio& reader);
-    static bool WriteCodeSignBlock(ELFIO::elfio& reader, std::string& tmpOutputFilePath, uint64_t& csOffset);
+    static bool WriteCodeSignBlock(ELFIO::elfio& reader, const std::string& inputFile,
+                                   std::string& tmpOutputFilePath, uint64_t& csOffset);
     static bool WriteSection(ELFIO::elfio& reader, const std::string& content, const std::string& secName);
     static bool WriteSecDataToFile(ELFIO::elfio& reader, SignerConfig& signerConfig,
                                    std::map<std::string, std::string>& signParams);
     static bool GenerateCodeSignByte(SignerConfig& signerConfig, const std::string& inputFile, uint64_t& csOffset,
                                      const std::string& selfSign);
     static bool ReplaceDataOffset(const std::string& filePath, uint64_t& csOffset, const std::vector<int8_t>& csData);
+    static bool AppendCodeSignSectionPreservingLayout(const std::string& inputFile, const std::string& outputFile,
+                                                      uint64_t& csOffset);
+    static bool ValidateProgramHeaders(const std::string& originalFile, const std::string& signedFile);
 };
 } // namespace SignatureTools
 } // namespace OHOS
