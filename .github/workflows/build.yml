@@ -30,7 +30,7 @@ jobs:
               eval "$(/storage/Users/currentUser/.harmonybrew/bin/brew shellenv)"
 
               echo ">>> Installing build tools"
-              brew install openssl ohos-sdk make
+              brew install openssl ohos-sdk make git
 
               echo ">>> Cloning repo"
               git clone --depth 1 https://github.com/nknkol/developtools_hapsigner.git /tmp/repo
