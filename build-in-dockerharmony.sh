@@ -4,15 +4,24 @@
 # Run inside hqzing/dockerharmony container
 set -e
 
+ALPINE="http://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64"
 REPO="https://github.com/nknkol/developtools_hapsigner.git"
 WORKDIR="/tmp/build"
 
-# ── Step 1: Install Harmonybrew ──────────────────────────────────────
+# ── Step 1: Install Alpine deps + zsh ─────────────────────────────────
+echo ">>> Installing ncurses-libs, libcap, zsh"
+curl -fsSL ${ALPINE}/APKINDEX.tar.gz | tar -zx -C /tmp
+install_apk() { V=$(grep -A1 "^P:$1$" /tmp/APKINDEX | sed -n "s/^V://p"); curl -L -o /tmp/$1.apk ${ALPINE}/$1-${V}.apk; tar -zxf /tmp/$1.apk -C /; }
+install_apk ncurses-libs
+install_apk libcap
+install_apk zsh
+
+# ── Step 2: Install Harmonybrew ──────────────────────────────────────
 echo ">>> Installing Harmonybrew"
-curl -fsSL https://harmonybrew.atomgit.com/install.sh | sh
+zsh -c "$(curl -fsSL https://harmonybrew.atomgit.com/install.sh)"
 export PATH="/storage/Users/currentUser/.harmonybrew/bin:$PATH"
 
-# ── Step 2: Install build tools ──────────────────────────────────────
+# ── Step 3: Install build tools ──────────────────────────────────────
 echo ">>> Installing openssl + ohsdk + make"
 brew install openssl ohsdk make
 

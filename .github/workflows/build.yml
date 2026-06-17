@@ -21,8 +21,16 @@ jobs:
               set -e
               ALPINE="http://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64"
 
+              echo ">>> Installing Alpine deps (ncurses, libcap, zsh)"
+              curl -fsSL ${ALPINE}/APKINDEX.tar.gz | tar -zx -C /tmp
+
+              install_apk() { V=$(grep -A1 "^P:$1$" /tmp/APKINDEX | sed -n "s/^V://p"); curl -L -o /tmp/$1.apk ${ALPINE}/$1-${V}.apk; tar -zxf /tmp/$1.apk -C /; }
+              install_apk ncurses-libs
+              install_apk libcap
+              install_apk zsh
+
               echo ">>> Installing Harmonybrew"
-              curl -fsSL https://harmonybrew.atomgit.com/install.sh | sh
+              zsh -c "$(curl -fsSL https://harmonybrew.atomgit.com/install.sh)"
               export PATH="/storage/Users/currentUser/.harmonybrew/bin:$PATH"
 
               echo ">>> Installing build tools"
