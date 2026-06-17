@@ -41,6 +41,7 @@ INCLUDES := \
   -I$(H)/codesigning/fsverity/include \
   -I$(H)/codesigning/sign/include \
   -I$(H)/codesigning/utils/include \
+  -I$(T)/third_party_elfio \
   -I$(T)/third_party_elfio/elfio \
   -I$(T)/third_party_json/single_include \
   -I$(T)/third_party_bounds_checking_function/include \
