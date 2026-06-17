@@ -176,21 +176,25 @@ static std::string GetParentPath(const std::string &outFilePath)
         return "";
     }
 
+    // Extract the directory part before calling realpath.
+    // The output file may not exist yet, so realpath on the full path
+    // would fail. We first resolve the parent directory.
+    std::string dirPath = outFilePath;
+    size_t lastSlash = dirPath.find_last_of('/');
+    if (lastSlash != std::string::npos && lastSlash > 0) {
+        dirPath = dirPath.substr(0, lastSlash);
+    } else {
+        dirPath = ".";
+    }
+
     char resolvedPath[PATH_MAX + 1] = {0x00};
-    if (realpath(outFilePath.c_str(), resolvedPath) == nullptr) {
-        SIGNATURE_TOOLS_LOGI("Get realpath from %s may failed", resolvedPath);
+    if (realpath(dirPath.c_str(), resolvedPath) == nullptr) {
+        SIGNATURE_TOOLS_LOGI("Get realpath from %s may failed (dir does not exist)", dirPath.c_str());
         return "";
     }
     resolvedPath[PATH_MAX] = '\0';
     SIGNATURE_TOOLS_LOGI("GetParentPath, resolvedPath:%s", resolvedPath);
-    char *parentPath = dirname(resolvedPath);
-    if (parentPath == nullptr) {
-        SIGNATURE_TOOLS_LOGI("Get parentPath of %s may failed", resolvedPath);
-        return "";
-    }
-
-    SIGNATURE_TOOLS_LOGI("GetParentPath :%s", parentPath);
-    return std::string(parentPath);
+    return std::string(resolvedPath);
 }
 
 static std::string GetFileName(const std::string &path)
