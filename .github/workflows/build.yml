@@ -2,7 +2,6 @@ name: build-binary-sign-tool
 
 on:
   push:
-    branches: [master]
     tags:
       - 'v*'
   workflow_dispatch:
