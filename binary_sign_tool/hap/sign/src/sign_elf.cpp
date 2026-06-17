@@ -18,6 +18,7 @@
 #include <cstring>
 #include <vector>
 #include <fstream>
+#include <sys/stat.h>
 
 #include "file_utils.h"
 #include "string_utils.h"
@@ -456,6 +457,13 @@ bool SignElf::AppendCodeSignSectionPreservingLayout(const std::string& inputFile
     out.close();
 
     csOffset = codesignOffset;
+
+    // Preserve the input file's permissions on the output
+    struct stat st;
+    if (stat(inputFile.c_str(), &st) == 0) {
+        chmod(outputFile.c_str(), st.st_mode);
+    }
+
     PrintMsg("add codesign section success");
     SIGNATURE_TOOLS_LOGD("[SignElf] .codesign section offset: %lu, size: %lu", csOffset,
                          static_cast<uint64_t>(PAGE_SIZE));
