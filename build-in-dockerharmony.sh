@@ -4,27 +4,19 @@
 # Run inside hqzing/dockerharmony container
 set -e
 
-ALPINE="http://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64"
 REPO="https://github.com/nknkol/developtools_hapsigner.git"
 WORKDIR="/tmp/build"
 
-# ── Step 1: Install zsh ──────────────────────────────────────────────
-echo ">>> Installing zsh"
-curl -fsSL ${ALPINE}/APKINDEX.tar.gz | tar -zx -C /tmp
-ZSH_VER=$(grep -A1 '^P:zsh$' /tmp/APKINDEX | sed -n 's/^V://p')
-curl -L -o /tmp/zsh.apk ${ALPINE}/zsh-${ZSH_VER}.apk
-tar -zxf /tmp/zsh.apk -C /
-
-# ── Step 2: Install Harmonybrew ──────────────────────────────────────
+# ── Step 1: Install Harmonybrew ──────────────────────────────────────
 echo ">>> Installing Harmonybrew"
-zsh -c "$(curl -fsSL https://harmonybrew.atomgit.com/install.sh)"
+curl -fsSL https://harmonybrew.atomgit.com/install.sh | sh
 export PATH="/storage/Users/currentUser/.harmonybrew/bin:$PATH"
 
-# ── Step 3: Install build tools ──────────────────────────────────────
+# ── Step 2: Install build tools ──────────────────────────────────────
 echo ">>> Installing openssl + ohsdk + make"
 brew install openssl ohsdk make
 
-# ── Step 4: Setup toolchain ──────────────────────────────────────────
+# ── Step 3: Setup toolchain ──────────────────────────────────────────
 export OHOS_SDK="/storage/Users/currentUser/.harmonybrew/opt/ohsdk"
 export PATH="${OHOS_SDK}/native/llvm/bin:$PATH"
 

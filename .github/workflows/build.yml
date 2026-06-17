@@ -21,14 +21,8 @@ jobs:
               set -e
               ALPINE="http://dl-cdn.alpinelinux.org/alpine/v3.22/main/aarch64"
 
-              echo ">>> Installing zsh"
-              curl -fsSL ${ALPINE}/APKINDEX.tar.gz | tar -zx -C /tmp
-              ZSH_VER=$(grep -A1 "^P:zsh$" /tmp/APKINDEX | sed -n "s/^V://p")
-              curl -L -o /tmp/zsh.apk ${ALPINE}/zsh-${ZSH_VER}.apk
-              tar -zxf /tmp/zsh.apk -C /
-
               echo ">>> Installing Harmonybrew"
-              zsh -c "$(curl -fsSL https://harmonybrew.atomgit.com/install.sh)"
+              curl -fsSL https://harmonybrew.atomgit.com/install.sh | sh
               export PATH="/storage/Users/currentUser/.harmonybrew/bin:$PATH"
 
               echo ">>> Installing build tools"
